@@ -1,0 +1,33 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load dataset
+df = pd.read_csv("student-mat.csv")
+print(df.head())  # Show first few rows
+
+# Check for missing values and duplicates
+df.fillna(df.median(), inplace=True)
+df.drop_duplicates(inplace=True)
+
+# Basic stats
+print("Average final grade (G3):", df['G3'].mean())
+print("Students scoring above 15 in G3:", (df['G3'] > 15).sum())
+print("Correlation between study time and G3:", df['studytime'].corr(df['G3']))
+
+# Gender-wise average final grade
+print(df.groupby('sex')['G3'].mean())
+
+# Visualizations
+sns.histplot(df['G3'], bins=10, kde=True)
+plt.title("Final Grade Distribution")
+plt.show()
+
+sns.scatterplot(x=df['studytime'], y=df['G3'])
+plt.title("Study Time vs Final Grade")
+plt.show()
+
+df.groupby('sex')['G3'].mean().plot(kind='bar', color=['blue', 'pink'])
+plt.title("Average Final Grade by Gender")
+plt.show()
