@@ -1,0 +1,51 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Step 1: Create Dataset
+data = {
+    "Study_Hours": np.random.randint(1, 40, 100),  # Study hours per week
+    "Attendance": np.random.randint(50, 100, 100),  # Attendance percentage
+}
+
+# Define pass/fail condition (simple threshold-based rule for simulation)
+data["Pass"] = [1 if (h > 15 and a > 75) else 0 for h, a in zip(data["Study_Hours"], data["Attendance"])]
+
+df = pd.DataFrame(data)
+
+# Step 2: Data Exploration
+print("\nDataset Head:")
+print(df.head())
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+# Visualizing the relationship
+plt.figure(figsize=(10,5))
+sns.scatterplot(x=df["Study_Hours"], y=df["Attendance"], hue=df["Pass"], palette="coolwarm")
+plt.xlabel("Study Hours")
+plt.ylabel("Attendance (%)")
+plt.title("Study Hours vs Attendance (Pass/Fail)")
+plt.show()
+
+# Step 3: Model Training
+X = df[["Study_Hours", "Attendance"]]
+y = df["Pass"]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Step 4: Model Evaluation
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+print("\nModel Accuracy:", accuracy)
+print("\nConfusion Matrix:")
+print(conf_matrix)
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
